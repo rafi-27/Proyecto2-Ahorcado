@@ -58,6 +58,10 @@ public class proyectoDos implements Initializable{
         hboxSuperior.getChildren().add(texto);
         
         Label palabras = new Label();
+        String g = "_ ";
+        int guiones = secreta.length();
+        palabras.setText(g.repeat(guiones));
+        
         // String formaSectreto="";
         // for (int i = 0; i < secreta.length(); i++) {
         //     formaSectreto+="_ ";
