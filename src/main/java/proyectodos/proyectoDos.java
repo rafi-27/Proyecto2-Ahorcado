@@ -57,21 +57,16 @@ public class proyectoDos implements Initializable{
         texto.setFont(new Font("Ubuntu",24));
         hboxSuperior.getChildren().add(texto);
         
-        Label palabras = new Label();
-        String g = "_ ";
-        int guiones = secreta.length();
-        palabras.setText(g.repeat(guiones));
-        
-        // String formaSectreto="";
-        // for (int i = 0; i < secreta.length(); i++) {
-        //     formaSectreto+="_ ";
-        // }
-        // palabras.setFont( new Font("Ubuntu",20));
-        // palabras.setText(formaSectreto.trim());
-        // hboxBajBox.getChildren().add(palabras);
+        String formaSectreto="";
+        for (int i = 0; i < secreta.length(); i++) {
+            formaSectreto+="_ ";
+        }
+        palabras.setFont( new Font("Ubuntu",20));
+        palabras.setText(formaSectreto.trim());
+        hboxBajBox.getChildren().add(palabras);
 
         imagen.setImage(new Image(getClass().getResourceAsStream("img/Ahorcado1.png")));
-
+        texto.setVisible(false);
         
     }
 
