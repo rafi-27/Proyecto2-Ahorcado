@@ -8,8 +8,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -40,6 +42,27 @@ public class proyectoDos implements Initializable{
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
+        ponerBotones();
+        ponerTitulo();
+        // String formaSectreto="";
+        // for (int i = 0; i < secreta.length(); i++) {
+        //     formaSectreto+="_ ";
+        // }
+        // palabras.setFont( new Font("Ubuntu",20));
+        // palabras.setText(formaSectreto.trim());
+        // hboxBajBox.getChildren().add(palabras);
+
+        imagen.setImage(new Image(getClass().getResourceAsStream("img/Ahorcado1.png")));
+    }
+
+    @FXML private void ponerTitulo(){
+        Label texto = new Label("Etiqueta juego del ahorcado");
+        texto.setFont(new Font("Ubuntu",24));
+        hboxSuperior.getChildren().add(texto);
+        //texto.setVisible(false);
+    }
+
+    @FXML private void ponerBotones(){
         String[] vocabulario = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "Ñ", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "Y", "Z"};
         TeclaPulsada gestor = new TeclaPulsada();
         for (int i = 0; i < vocabulario.length; i++) {
@@ -53,22 +76,8 @@ public class proyectoDos implements Initializable{
                 todosLosBotonesSegundaParte.getChildren().add(botoncito);
             }
         }
-        Label texto = new Label("Etiqueta juego del ahorcado");
-        texto.setFont(new Font("Ubuntu",24));
-        hboxSuperior.getChildren().add(texto);
-        
-        String formaSectreto="";
-        for (int i = 0; i < secreta.length(); i++) {
-            formaSectreto+="_ ";
-        }
-        palabras.setFont( new Font("Ubuntu",20));
-        palabras.setText(formaSectreto.trim());
-        hboxBajBox.getChildren().add(palabras);
-
-        imagen.setImage(new Image(getClass().getResourceAsStream("img/Ahorcado1.png")));
-        texto.setVisible(false);
-        
     }
+
 
     class TeclaPulsada implements EventHandler<ActionEvent>{
         @Override
@@ -81,13 +90,14 @@ public class proyectoDos implements Initializable{
     }
 
     public void comprobarLetra(String c){
-        boolean acertada=true;
+        boolean acertada=false;
+        String formatoSecreto="";
+
         letrasPulsadas.add(c.charAt(0));
         if (secreta.contains(c)) {
-            String formatoSecreto="";
             for (int i = 0; i < secreta.length(); i++) {
                 if (letrasPulsadas.contains(secreta.charAt(i))) {
-                    formatoSecreto=formatoSecreto+secreta.charAt(i);
+                    formatoSecreto=formatoSecreto+secreta.charAt(i)+" ";
                 }else{
                     acertada=false;
                     formatoSecreto+="_ ";
@@ -101,13 +111,25 @@ public class proyectoDos implements Initializable{
             acertada=false;
             imagen.setImage(new Image(getClass().getResourceAsStream("img/Ahorcado"+fallos+".png")));
         }
-
+        //acertada
+        //!formatoSecreto.contains("_")
+        if (!formatoSecreto.contains("_")) {
+            acertada=true;
+        }
         if (acertada) {
-            System.out.println("Has ganado");
+            Alert alertaGanadora = new Alert(AlertType.CONFIRMATION);
+            alertaGanadora.setTitle("Has ganado.");
+            alertaGanadora.setHeaderText("Muy bien hecho.");
+            alertaGanadora.setContentText("Has adivinado la palabra secreta.");
+            alertaGanadora.showAndWait();
         }
 
         if (fallos==MAX_FALLOS) {
-            System.out.println("Ahorcado");
+            Alert alertaPerdedora = new Alert(AlertType.ERROR);
+            alertaPerdedora.setTitle("Has perdido.");
+            alertaPerdedora.setHeaderText("No has adivinado la palabra.");
+            alertaPerdedora.setContentText("No has adivinado la palabra secreta.");
+            alertaPerdedora.showAndWait();
         }
     }
 
