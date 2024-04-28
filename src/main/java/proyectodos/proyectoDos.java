@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -44,14 +45,20 @@ public class proyectoDos implements Initializable {
     ImageView imagen;
 
     Label palabras = new Label();
-
-    String secreta = "THIAR";
-    private int fallos = 1;
-    private final int MAX_FALLOS = 7;
+    String[] topSecretc = {"GITHUB","THIAR","PYTHON","JAVA","SQL","JUEGOS","PROGRA"};
+    String secreta;
+    private int fallos=0;
+    private final int MAX_FALLOS=6;
     private ArrayList<Character> letrasPulsadas = new ArrayList<>();
+
+    public void elegirPalabraSecreta(){
+        int opcion = ThreadLocalRandom.current().nextInt(0,topSecretc.length);
+        secreta=topSecretc[opcion];
+    }
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
+        elegirPalabraSecreta();
         ponerBotones();
         ponerTitulo();
         actualizarImagen();
@@ -89,38 +96,15 @@ public class proyectoDos implements Initializable {
 
         if (fallos == MAX_FALLOS) {
             fallada();
-            ButtonType bottonSi = new ButtonType("Si");
-            ButtonType bottonNo = new ButtonType("No");
-            Alert seguir = new Alert(AlertType.CONFIRMATION);
-            seguir.setTitle("¿Otra?");
-            seguir.setContentText("¿Deseas repetir juego?");
-            seguir.getButtonTypes().addAll(bottonSi, bottonNo);
-
-            Optional<ButtonType> result = seguir.showAndWait();
-            if (result.isPresent() && result.get() == bottonSi) {
-                reiniciar(); // Reiniciar el juego si el usuario elige "Si"
-            } else {
-                System.exit(0); // Salir del juego si el usuario elige "No"
-            }
+            alertaReiniciar();
         } else if (formatoSecretoCompleto()) {
             acertada();
-            ButtonType bottonSi = new ButtonType("Si");
-            ButtonType bottonNo = new ButtonType("No");
-            Alert seguir = new Alert(AlertType.CONFIRMATION);
-            seguir.setTitle("¿Otra?");
-            seguir.setContentText("¿Deseas repetir juego?");
-            seguir.getButtonTypes().addAll(bottonSi, bottonNo);
-
-            Optional<ButtonType> result = seguir.showAndWait();
-            if (result.isPresent() && result.get() == bottonSi) {
-                reiniciar(); // Reiniciar el juego si el usuario elige "Si"
-            } else {
-                System.exit(0); // Salir del juego si el usuario elige "No"
-            }
+            alertaReiniciar();
         }
     }
 
     private void reiniciar() {
+        elegirPalabraSecreta();
         todosLosBotonesPrimeraParte.getChildren().clear();
         todosLosBotonesSegundaParte.getChildren().clear();
         fallos = 0;
@@ -128,6 +112,28 @@ public class proyectoDos implements Initializable {
         actualizarImagen();
         mostrarFormatoSecreto();
         ponerBotones();
+    }
+
+    public void alertaReiniciar(){
+        ButtonType bottonSi = new ButtonType("Si");
+            ButtonType bottonNo = new ButtonType("No");
+            Alert seguir = new Alert(AlertType.CONFIRMATION);
+            seguir.getButtonTypes().clear();
+            seguir.setTitle("¿Otra?");
+            seguir.setContentText("¿Deseas repetir juego?");
+            seguir.getButtonTypes().addAll(bottonSi, bottonNo);
+
+            Optional<ButtonType> result = seguir.showAndWait();
+            if (result.get().getText().equalsIgnoreCase("si")) {
+                reiniciar();
+            }else{
+                System.exit(0);
+            }
+            // if (result.isPresent() && result.get() == bottonSi) {
+            //     reiniciar(); 
+            // } else {
+            //     System.exit(0); 
+            // }
     }
 
     private void mostrarFormatoSecreto() {
