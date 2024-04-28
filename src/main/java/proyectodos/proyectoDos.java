@@ -2,6 +2,7 @@ package proyectodos;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
@@ -10,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
@@ -52,88 +54,113 @@ public class proyectoDos implements Initializable {
     public void initialize(URL arg0, ResourceBundle arg1) {
         ponerBotones();
         ponerTitulo();
-        // String formaSectreto="";
-        // for (int i = 0; i < secreta.length(); i++) {
-        // formaSectreto+="_ ";
-        // }
-        // palabras.setFont( new Font("Ubuntu",20));
-        // palabras.setText(formaSectreto.trim());
-        // hboxBajBox.getChildren().add(palabras);
-
-        imagen.setImage(new Image(getClass().getResourceAsStream("img/Ahorcado1.png")));
+        actualizarImagen();
+        mostrarFormatoSecreto();
     }
 
-    @FXML
     private void ponerTitulo() {
         Label texto = new Label("Etiqueta juego del ahorcado");
         texto.setFont(new Font("Ubuntu", 24));
         hboxSuperior.getChildren().add(texto);
-        // texto.setVisible(false);
     }
 
-    @FXML
     private void ponerBotones() {
         String[] vocabulario = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "Ñ", "O", "P",
                 "Q", "R", "S", "T", "U", "V", "W", "Y", "Z" };
         TeclaPulsada gestor = new TeclaPulsada();
         for (int i = 0; i < vocabulario.length; i++) {
-            if (i <= 13) {
-                Button botoncito = new Button(vocabulario[i]);
-                botoncito.setOnAction(gestor);
+            Button botoncito = new Button(vocabulario[i]);
+            botoncito.setOnAction(gestor);
+            if (i <= 12) {
                 todosLosBotonesPrimeraParte.getChildren().add(botoncito);
             } else {
-                Button botoncito = new Button(vocabulario[i]);
-                botoncito.setOnAction(gestor);
                 todosLosBotonesSegundaParte.getChildren().add(botoncito);
             }
         }
     }
 
-    class TeclaPulsada implements EventHandler<ActionEvent> {
-        @Override
-        public void handle(ActionEvent tecla) {
-            // TODO Auto-generated method stub
-            Button boton = (Button) tecla.getSource();
-            boton.setDisable(true);
-            comprobarLetra(boton.getText());
-        }
-    }
-
-    public void comprobarLetra(String c) {
-        boolean acertada = true;
-        String formatoSecreto = "";
-
+    private void comprobarLetra(String c) {
         letrasPulsadas.add(c.charAt(0));
-        if (secreta.contains(c)) {
-            for (int i = 0; i < secreta.length(); i++) {
-                if (letrasPulsadas.contains(secreta.charAt(i))) {
-                    formatoSecreto = formatoSecreto + secreta.charAt(i) + " ";
-                } else {
-                    acertada = false;
-                    formatoSecreto += "_ ";
-                }
-            }
-            palabras.setFont(new Font("Ubuntu", 20));
-            palabras.setText(formatoSecreto.trim());
-            hboxBajBox.getChildren().add(palabras);
-        } else {
+        if (!secreta.contains(c)) {
             fallos++;
-            acertada = false;
-            imagen.setImage(new Image(getClass().getResourceAsStream("img/Ahorcado" + fallos + ".png")));
+            actualizarImagen();
         }
-        // acertada
-        // !formatoSecreto.contains("_")
-        if (!formatoSecreto.contains("_")) {
-            acertada();
-        }
+        mostrarFormatoSecreto();
 
         if (fallos == MAX_FALLOS) {
             fallada();
-        }
+            ButtonType bottonSi = new ButtonType("Si");
+            ButtonType bottonNo = new ButtonType("No");
+            Alert seguir = new Alert(AlertType.CONFIRMATION);
+            seguir.setTitle("¿Otra?");
+            seguir.setContentText("¿Deseas repetir juego?");
+            seguir.getButtonTypes().addAll(bottonSi, bottonNo);
 
+            Optional<ButtonType> result = seguir.showAndWait();
+            if (result.isPresent() && result.get() == bottonSi) {
+                reiniciar(); // Reiniciar el juego si el usuario elige "Si"
+            } else {
+                System.exit(0); // Salir del juego si el usuario elige "No"
+            }
+        } else if (formatoSecretoCompleto()) {
+            acertada();
+            ButtonType bottonSi = new ButtonType("Si");
+            ButtonType bottonNo = new ButtonType("No");
+            Alert seguir = new Alert(AlertType.CONFIRMATION);
+            seguir.setTitle("¿Otra?");
+            seguir.setContentText("¿Deseas repetir juego?");
+            seguir.getButtonTypes().addAll(bottonSi, bottonNo);
+
+            Optional<ButtonType> result = seguir.showAndWait();
+            if (result.isPresent() && result.get() == bottonSi) {
+                reiniciar(); // Reiniciar el juego si el usuario elige "Si"
+            } else {
+                System.exit(0); // Salir del juego si el usuario elige "No"
+            }
+        }
     }
 
-    public void acertada() {
+    private void reiniciar() {
+        todosLosBotonesPrimeraParte.getChildren().clear();
+        todosLosBotonesSegundaParte.getChildren().clear();
+        fallos = 0;
+        letrasPulsadas.clear();
+        actualizarImagen();
+        mostrarFormatoSecreto();
+        ponerBotones();
+    }
+
+    private void mostrarFormatoSecreto() {
+        String formatoSecreto = "";
+        for (int i = 0; i < secreta.length(); i++) {
+            char letra = secreta.charAt(i);
+            if (letrasPulsadas.contains(letra)) {
+                formatoSecreto += letra + " ";
+            } else {
+                formatoSecreto += "_ ";
+            }
+        }
+        palabras.setFont(new Font("Ubuntu", 20));
+        palabras.setText(formatoSecreto.trim());
+        hboxBajBox.getChildren().clear();
+        hboxBajBox.getChildren().add(palabras);
+    }
+
+    private boolean formatoSecretoCompleto() {
+        for (int i = 0; i < secreta.length(); i++) {
+            if (!letrasPulsadas.contains(secreta.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void actualizarImagen() {
+        String ubicacion = "img/Ahorcado" + (fallos + 1) + ".png";
+        imagen.setImage(new Image(getClass().getResourceAsStream(ubicacion)));
+    }
+
+    private void acertada() {
         Alert alertaGanadora = new Alert(AlertType.CONFIRMATION);
         alertaGanadora.setTitle("Has ganado.");
         alertaGanadora.setHeaderText("Muy bien hecho.");
@@ -141,12 +168,20 @@ public class proyectoDos implements Initializable {
         alertaGanadora.showAndWait();
     }
 
-    public void fallada() {
+    private void fallada() {
         Alert alertaPerdedora = new Alert(AlertType.ERROR);
         alertaPerdedora.setTitle("Has perdido.");
         alertaPerdedora.setHeaderText("No has adivinado la palabra.");
-        alertaPerdedora.setContentText("No has adivinado la palabra secreta.");
+        alertaPerdedora.setContentText("La palabra secreta era: " + secreta);
         alertaPerdedora.showAndWait();
     }
 
+    class TeclaPulsada implements EventHandler<ActionEvent> {
+        @Override
+        public void handle(ActionEvent tecla) {
+            Button boton = (Button) tecla.getSource();
+            boton.setDisable(true);
+            comprobarLetra(boton.getText());
+        }
+    }
 }
