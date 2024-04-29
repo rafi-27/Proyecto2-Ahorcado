@@ -42,7 +42,8 @@ public class proyectoDos implements Initializable {
     @FXML
     HBox hboxBajBox;
     @FXML
-    ImageView imagen;
+    ImageView imag;
+    @FXML Pane imagenTitulo;
 
     Label palabras = new Label();
     String[] topSecretc = {"GITHUB","THIAR","PYTHON","JAVA","SQL","JUEGOS","PROGRA"};
@@ -58,10 +59,18 @@ public class proyectoDos implements Initializable {
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
+        Image imagen = new Image(getClass().getResourceAsStream("img/titulo.png"));
+        ImageView titulo = new ImageView(imagen);
+        titulo.setFitHeight(55);
+        titulo.setFitWidth(223);
+        
+        imagenTitulo.getChildren().add(titulo);
+
         elegirPalabraSecreta();
         ponerBotones();
         ponerTitulo();
-        actualizarImagen();
+        //actualizarImagen();
+        imag.setImage(new Image(getClass().getResourceAsStream("img/Ahorcado1.png")));
         mostrarFormatoSecreto();
     }
 
@@ -90,7 +99,8 @@ public class proyectoDos implements Initializable {
         letrasPulsadas.add(c.charAt(0));
         if (!secreta.contains(c)) {
             fallos++;
-            actualizarImagen();
+            String ubicacion = "img/Ahorcado" + (fallos + 1) + ".png";
+            imag.setImage(new Image(getClass().getResourceAsStream(ubicacion)));
         }
         mostrarFormatoSecreto();
 
@@ -109,9 +119,9 @@ public class proyectoDos implements Initializable {
         todosLosBotonesSegundaParte.getChildren().clear();
         fallos = 0;
         letrasPulsadas.clear();
-        actualizarImagen();
         mostrarFormatoSecreto();
         ponerBotones();
+        imag.setImage(new Image(getClass().getResourceAsStream("img/Ahorcado1.png")));
     }
 
     public void alertaReiniciar(){
@@ -129,11 +139,6 @@ public class proyectoDos implements Initializable {
             }else{
                 System.exit(0);
             }
-            // if (result.isPresent() && result.get() == bottonSi) {
-            //     reiniciar(); 
-            // } else {
-            //     System.exit(0); 
-            // }
     }
 
     private void mostrarFormatoSecreto() {
@@ -159,11 +164,6 @@ public class proyectoDos implements Initializable {
             }
         }
         return true;
-    }
-
-    private void actualizarImagen() {
-        String ubicacion = "img/Ahorcado" + (fallos + 1) + ".png";
-        imagen.setImage(new Image(getClass().getResourceAsStream(ubicacion)));
     }
 
     private void acertada() {
