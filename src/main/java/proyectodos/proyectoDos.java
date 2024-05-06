@@ -43,36 +43,43 @@ public class proyectoDos implements Initializable {
     HBox hboxBajBox;
     @FXML
     ImageView imag;
-    @FXML Pane imagenTitulo;
+    @FXML
+    Pane imagenTitulo;
 
     Label palabras = new Label();
-    String[] topSecretc = {"GITHUB","THIAR","PYTHON","JAVA","SQL","JUEGOS","PROGRA"};
+    String[] topSecretc = { "GITHUB", "THIAR", "PYTHON", "JAVA", "SQL", "JUEGOS", "PROGRA" };
     String secreta;
-    private int fallos=0;
-    private final int MAX_FALLOS=6;
+    private int fallos = 0;
+    private final int MAX_FALLOS = 6;
     private ArrayList<Character> letrasPulsadas = new ArrayList<>();
 
-    public void elegirPalabraSecreta(){
-        int opcion = ThreadLocalRandom.current().nextInt(0,topSecretc.length);
-        secreta=topSecretc[opcion];
+    public void elegirPalabraSecreta() {
+        int opcion = ThreadLocalRandom.current().nextInt(0, topSecretc.length);
+        secreta = topSecretc[opcion];
     }
 
+
+
+    
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
         Image imagen = new Image(getClass().getResourceAsStream("img/titulo.png"));
         ImageView titulo = new ImageView(imagen);
         titulo.setFitHeight(55);
         titulo.setFitWidth(223);
-        
+
         imagenTitulo.getChildren().add(titulo);
 
         elegirPalabraSecreta();
         ponerBotones();
         ponerTitulo();
-        //actualizarImagen();
+        // actualizarImagen();
         imag.setImage(new Image(getClass().getResourceAsStream("img/Ahorcado1.png")));
         mostrarFormatoSecreto();
     }
+
+
+
 
     private void ponerTitulo() {
         Label texto = new Label("Etiqueta juego del ahorcado");
@@ -95,6 +102,15 @@ public class proyectoDos implements Initializable {
         }
     }
 
+    class TeclaPulsada implements EventHandler<ActionEvent> {
+        @Override
+        public void handle(ActionEvent tecla) {
+            Button boton = (Button) tecla.getSource();
+            boton.setDisable(true);
+            comprobarLetra(boton.getText());
+        }
+    }
+
     private void comprobarLetra(String c) {
         letrasPulsadas.add(c.charAt(0));
         if (!secreta.contains(c)) {
@@ -111,34 +127,6 @@ public class proyectoDos implements Initializable {
             acertada();
             alertaReiniciar();
         }
-    }
-
-    private void reiniciar() {
-        elegirPalabraSecreta();
-        todosLosBotonesPrimeraParte.getChildren().clear();
-        todosLosBotonesSegundaParte.getChildren().clear();
-        fallos = 0;
-        letrasPulsadas.clear();
-        mostrarFormatoSecreto();
-        ponerBotones();
-        imag.setImage(new Image(getClass().getResourceAsStream("img/Ahorcado1.png")));
-    }
-
-    public void alertaReiniciar(){
-        ButtonType bottonSi = new ButtonType("Si");
-            ButtonType bottonNo = new ButtonType("No");
-            Alert seguir = new Alert(AlertType.CONFIRMATION);
-            seguir.getButtonTypes().clear();
-            seguir.setTitle("¿Otra?");
-            seguir.setContentText("¿Deseas repetir juego?");
-            seguir.getButtonTypes().addAll(bottonSi, bottonNo);
-
-            Optional<ButtonType> result = seguir.showAndWait();
-            if (result.get().getText().equalsIgnoreCase("si")) {
-                reiniciar();
-            }else{
-                System.exit(0);
-            }
     }
 
     private void mostrarFormatoSecreto() {
@@ -166,6 +154,19 @@ public class proyectoDos implements Initializable {
         return true;
     }
 
+    private void reiniciar() {
+        elegirPalabraSecreta();
+        todosLosBotonesPrimeraParte.getChildren().clear();
+        todosLosBotonesSegundaParte.getChildren().clear();
+        fallos = 0;
+        letrasPulsadas.clear();
+        mostrarFormatoSecreto();
+        ponerBotones();
+        imag.setImage(new Image(getClass().getResourceAsStream("img/Ahorcado1.png")));
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------\\
+
     private void acertada() {
         Alert alertaGanadora = new Alert(AlertType.CONFIRMATION);
         alertaGanadora.setTitle("Has ganado.");
@@ -182,12 +183,20 @@ public class proyectoDos implements Initializable {
         alertaPerdedora.showAndWait();
     }
 
-    class TeclaPulsada implements EventHandler<ActionEvent> {
-        @Override
-        public void handle(ActionEvent tecla) {
-            Button boton = (Button) tecla.getSource();
-            boton.setDisable(true);
-            comprobarLetra(boton.getText());
+    public void alertaReiniciar() {
+        ButtonType bottonSi = new ButtonType("Si");
+        ButtonType bottonNo = new ButtonType("No");
+        Alert seguir = new Alert(AlertType.CONFIRMATION);
+        seguir.getButtonTypes().clear();
+        seguir.setTitle("¿Otra?");
+        seguir.setContentText("¿Deseas repetir juego?");
+        seguir.getButtonTypes().addAll(bottonSi, bottonNo);
+
+        Optional<ButtonType> result = seguir.showAndWait();
+        if (result.get().getText().equalsIgnoreCase("si")) {
+            reiniciar();
+        } else {
+            System.exit(0);
         }
     }
 }
