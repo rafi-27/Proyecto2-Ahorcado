@@ -60,7 +60,7 @@ public class proyectoDos implements Initializable {
 
 
 
-    
+
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
         Image imagen = new Image(getClass().getResourceAsStream("img/titulo.png"));
