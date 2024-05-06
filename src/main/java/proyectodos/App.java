@@ -27,9 +27,12 @@ public class App extends Application {
         stage.setTitle("Rafik Bachri Marouf");
         stage.getIcons().add(new Image(getClass().getResourceAsStream("img/Ahorcado7.png")));
         stage.setScene(scene);
-        stage.setOnCloseRequest(event -> {
-            event.consume();
-            Alert alertaCierre = new Alert(Alert.AlertType.CONFIRMATION);
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+
+            @Override
+            public void handle(WindowEvent arg0) {
+                arg0.consume();
+                Alert alertaCierre = new Alert(Alert.AlertType.CONFIRMATION);
             alertaCierre.setTitle("¿Quieres cerrar?");
             alertaCierre.setHeaderText("¿Quieres salir o no?");
             alertaCierre.setContentText("Si sales dejas de juegar.");
@@ -46,7 +49,29 @@ public class App extends Application {
                 alertaCierre.close();
                 
             }
+            }
+            
         });
+        // stage.setOnCloseRequest(event -> {
+        //     event.consume();
+        //     Alert alertaCierre = new Alert(Alert.AlertType.CONFIRMATION);
+        //     alertaCierre.setTitle("¿Quieres cerrar?");
+        //     alertaCierre.setHeaderText("¿Quieres salir o no?");
+        //     alertaCierre.setContentText("Si sales dejas de juegar.");
+
+        //     alertaCierre.getButtonTypes().clear();
+        //     ButtonType si = new ButtonType("Si");
+        //     ButtonType no = new ButtonType("No");
+        //     alertaCierre.getButtonTypes().addAll(si, no);
+
+        //     Optional<ButtonType> result = alertaCierre.showAndWait();
+        //     if (result.get().getText().equalsIgnoreCase("si")) {
+        //         System.exit(0);
+        //     } else {
+        //         alertaCierre.close();
+                
+        //     }
+        // });
         stage.setResizable(false);
         stage.show();
     }
